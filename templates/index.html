@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNS Query</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        input[type=text], select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type=submit] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type=submit]:hover {
+            background-color: #45a049;
+        }
+        .json-viewer {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/json-viewer-js/dist/json-viewer.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/json-viewer-js/dist/json-viewer.min.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Enter DNS Query</h1>
+    <form method="post">
+        Domain Name: <input type="text" name="name" required>
+        Query Type:
+        <select name="qtype">
+            <option value=1>A</option>
+            <option value=28>AAAA</option>
+            <option value=5>CNAME</option>
+            <option value=15>MX</option>
+            <option value=2>NS</option>
+            <option value=12>PTR</option>
+            <option value=6>SOA</option>
+            <option value=16>TXT</option>
+            <option value=33>SRV</option>
+            <option value=257>CAA</option>
+            <option value=35>NAPTR</option>
+            <option value=37>CERT</option>
+            <option value=39>DNAME</option>
+            <option value=44>SSHFP</option>
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+    {% if result %}
+    <h2>Current Result</h2>
+    <div class="json-viewer" id="current-json-renderer"></div>
+    <script>
+        const currentJsonData = {{ result | tojson | safe }};
+        const currentViewer = new JSONViewer();
+        document.querySelector("#current-json-renderer").appendChild(currentViewer.getContainer());
+        currentViewer.showJSON(currentJsonData, null, 2);
+    </script>
+    {% endif %}
+    <h2>Previous Queries</h2>
+    {% for query in queries %}
+    <div class="json-viewer" id="json-renderer-{{ query.id }}"></div>
+    <script>
+        const jsonData{{ query.id }} = {{ query.result | tojson | safe }};
+        const viewer{{ query.id }} = new JSONViewer();
+        document.querySelector("#json-renderer-{{ query.id }}").appendChild(viewer{{ query.id }}.getContainer());
+        viewer{{ query.id }}.showJSON(jsonData{{ query.id }}, null, 2);
+    </script>
+    {% endfor %}
+</body>
+</html>
