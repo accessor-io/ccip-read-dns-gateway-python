@@ -2,6 +2,7 @@
 
 This project provides a DNS gateway for reading and resolving DNS queries using Flask and aiohttp. It includes tools for handling DNS queries, interacting with blockchain contracts, and performing unit and end-to-end tests.
 
+Work in progress - Need to Implement EVM functionality
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
